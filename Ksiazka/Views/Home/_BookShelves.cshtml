@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Ksiazka.ViewModels.BookShelfViewModel>
+
+@foreach (var shelf in Model)
+{
+    
+    <div class="book-container">
+        @if (shelf.Books.Count() > 0)
+        {
+            <h3>Półka o nazwie: @shelf.Name <button class="btn btn-primary">+</button></h3>
+            foreach (var book in shelf.Books)
+            {
+                <div class="book" onclick="GoTo('@Url.Action("bookDetails", "Home", new { id = book.Id })')">
+                    <div class="front">
+                        <div class="cover">
+                            <p class=author>@book.Title</p>
+                        </div>
+                    </div>
+                    <div class="left-side">
+                        <h2>
+                            <span>@book.Title</span>
+                            <span>04.01.2019</span>
+                        </h2>
+                    </div>
+                </div>
+            }
+
+        }
+        else
+        {
+            <span>Brak książek na półce ;(</span>
+            <hr />
+            <button class="btn btn-warning">Dodaj pierwszą książkę!</button>
+        }
+    </div>
+}
+
+@* Tutaj trzeba zrobić widok wszystkich półek z książkami *@
+

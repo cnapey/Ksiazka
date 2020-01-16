@@ -1,0 +1,146 @@
+﻿@using Ksiazka.Models
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Książka adresowa", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Strona główna", "Index", "Home", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("Dokumentacja Api", "Index", "Help", new { area = "" }, null)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Knapiński, Kudelski, Kowalski</p>
+            @if (StaticConfig.AppEnviroment == AppEnviroment.Developer)
+            {
+                <hr />
+
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#envModal" style="position:fixed; left:0;top:0;opacity:.4; z-index:9999;">
+            DEV
+        </button>
+
+                <div class="modal fade" id="envModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h2 class="modal-title" id="exampleModalLabel">Ustawienia aplikacji</h2>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h3 class="text-warning">Enviroment - DEVELOPER</h3>
+                                        <span id="updateDataStatus" class="text-success" style="font-weight:bold; display: block; font-size: 1.4em;"></span>
+                                        <span class="text-danger" style="font-weight: bold;">*Ustawienia środowiska developerskiego:</span>
+                                        <table class="table">
+                                            <tr>
+                                                <th>Opóźnienie żądań Ajax [ms]:</th>
+                                                <td><input type="number" id="taskDelayInput" name="taskDelay" value="" /></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Klucz szyfrowania:</th>
+                                                <td><input type="text" id="encryptionKeyInput" name="EncryptionKey" value="" /></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Klucz dostępu:</th>
+                                                <td><input type="text" id="accessKeyInput" name="AccessKey" value="" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <button type="button" class="btn btn-info btn-block" onclick="updateDeveloperEnviroment()">Aktualizuj</button>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                
+            }
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+
+<script>
+
+     $(document).ready(function(e) {
+        $.ajax({
+            url: '/api/Base/GetDeveloperOptions',
+            type: "GET",
+            cache: false,
+            success: function (data) {
+                $('#taskDelayInput').val(data.TaskSleepTime);
+                $('#encryptionKeyInput').val(data.EncryptionKey);
+                $('#accessKeyInput').val(data.AccessKey);
+            },
+            error: function () {
+                $('#updateDataStatus').html('Coś nie pykło :(');
+            }
+        });
+     });
+
+
+    function updateDeveloperEnviroment() {
+            var taskDelay = document.getElementById("taskDelayInput").value;
+            var encryptionKey = document.getElementById("encryptionKeyInput").value;
+            var accessKey = document.getElementById("accessKeyInput").value;
+            var formData = { 'TaskSleepTime': taskDelay, 'EncryptionKey': encryptionKey, 'AccessKey': accessKey };
+
+        $.ajax({
+            url: '/api/Base/UpdateDeveloperOptions',
+            type: "POST",
+            data: JSON.stringify(formData),
+            contentType: "application/json; charset=utf-8",
+            cache: false,
+            success: function (data) {
+                $('#updateDataStatus').html(data);
+                $('#updateDataStatus').html('Elegancko zapisano dane w bazie danych ;)');
+            },
+            error: function () {
+                $('#updateDataStatus').html('Coś nie pykło :(');
+            }
+        });
+    }
+
+    function GoTo(url) {
+            location.href = url;
+    }
+
+</script>
+
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,51 @@
+﻿@model Ksiazka.ViewModels.AddressBookViewModel
+
+@{
+    ViewBag.Title = "BookDetails";
+}
+
+<h2>BookDetails</h2>
+
+<div>
+    <h4>AddressBook</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreateTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateTime)
+        </dd>
+
+    </dl>
+</div>
+
+<h2>Adresy</h2>
+<ul>
+    @foreach (var adres in Model.PersonalDatas)
+    {
+        <li>
+            @adres.Name @adres.Surname
+        </li>
+    }
+</ul>
+
+
+
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+
+
